@@ -48,16 +48,16 @@ async with app.run() as running:
 
 The agent now has all six native Engram MCP tools — `store_memory`, `query_memory`, `list_memories`, `list_buckets`, `delete_memory`, `clear_memories` — wired through mcp-agent's standard tool-routing layer.
 
-## Why this is the cleanest of all the framework integrations
+## Why this integration is so small
 
-mcp-agent is designed around MCP. Engram already speaks MCP. The integration is one line of config; no adapter code, no tool wrappers, no schema mapping. Compare to LangChain (needs a custom `BaseChatMessageHistory`), CrewAI (needs `BaseTool` subclasses), AutoGen (needs `FunctionTool` wrappers) — all of those exist because those frameworks have their own tool/memory abstractions. mcp-agent doesn't; the abstraction IS MCP.
+mcp-agent is MCP-native, and Engram already exposes an MCP endpoint. The integration is a single `MCPServerSettings` entry — no adapter code, no tool wrappers, no schema mapping. The agent's tool surface comes straight from MCP discovery.
 
 ## Verified
 
 Smoke-tested against live `api.lumetra.io`:
 
-- `engram_server_settings()` returns a valid `MCPServerSettings` with `transport="sse"`, the correct URL, and `Authorization: Bearer <key>` header.
-- The same Bearer token reaches Engram's HTTP API and lists 504 buckets in the account, confirming the credentials and transport choice work end-to-end.
+- `engram_server_settings()` returns a valid `MCPServerSettings` with `transport="sse"`, the correct URL, and `Authorization: Bearer <key>` header populated.
+- The same Bearer token reaches Engram's HTTP API and returns the tenant's bucket list, confirming the credentials and transport choice work end-to-end.
 
 For a full agent-loop verification, drop the helper into the standard mcp-agent starter and run any of their example workflows; Engram appears as the `engram` server in `agent.server_names` and the six tools are immediately available.
 
